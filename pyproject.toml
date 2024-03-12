@@ -65,7 +65,7 @@ test = [
     "pytest-forked~=1.6.0",
     "pytest-sugar~=0.9.7",
     "pytest-xdist~=3.5.0",
-    "ruff~=0.1.11",
+    "ruff~=0.3.2",
     "tox~=4.11.4",
     "tox-gh-actions~=3.2.0",
 ]
@@ -186,6 +186,17 @@ exclude = [
     "node_modules",
     "venv",
 ]
+line-length = 79
+src = ["src", "test"]
+target-version = "py311"
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
 ignore = [
     "ANN002",
     "ANN003",
@@ -198,7 +209,6 @@ ignore = [
     "ISC001",
     "S101",
 ]
-line-length = 79
 select = [
     "A",   # flake8-builtins
     "ANN", # flake8-annotations
@@ -231,23 +241,15 @@ select = [
     "W",   # pycodestyle Warning
     "YTT", # flake8-2020
 ]
-src = ["src", "test"]
-target-version = "py311"
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
 docstring-quotes = "double"
 
-[tool.ruff.format]
-docstring-code-format = true
-indent-style = "space"
-quote-style = "double"
-skip-magic-trailing-comma = false
-
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["src", "test"]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [tool.setuptools]
@@ -279,7 +281,7 @@ legacy_tox_ini = """
 
     [testenv]
     commands =
-        ruff .
+        ruff check .
         ruff format --check .
         pyright .
         coverage erase
