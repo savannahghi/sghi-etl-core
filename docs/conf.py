@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath("src"))
 
 author = "Savannah Global Health Institute"
 copyright = f"{datetime.today().year}, Savannah Global Health Institute"
-project = "sghi-miniETL"
+project = "sghi-etl-core"
 
 
 # -----------------------------------------------------------------------------
@@ -60,12 +60,12 @@ nitpick_ignore = [
     ("py:class", "_RDT"),  # private type annotations
     ("py:class", "TracebackType"),  # Used as type annotation. Only available when type checking
     ("py:class", "sghi.disposable.Disposable"),  # docs aren't published yet
-    ("py:class", "sghi.miniETL.core._PDT"),  # private type annotations
-    ("py:class", "sghi.miniETL.core._RDT"),  # private type annotations
+    ("py:class", "sghi.etl.core._PDT"),  # private type annotations
+    ("py:class", "sghi.etl.core._RDT"),  # private type annotations
     ("py:exc", "sghi.disposable.ResourceDisposedError"),  # docs aren't published yet
     ("py:func", "sghi.disposable.not_disposed"),  # docs aren't published yet
-    ("py:obj", "sghi.miniETL.core._PDT"),  # private type annotations
-    ("py:obj", "sghi.miniETL.core._RDT"),  # private type annotations
+    ("py:obj", "sghi.etl.core._PDT"),  # private type annotations
+    ("py:obj", "sghi.etl.core._RDT"),  # private type annotations
 ]
 
 templates_path = ["templates"]

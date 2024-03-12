@@ -1,4 +1,4 @@
-"""Tests for the ``sghi.miniETL.core.config`` module."""
+"""Tests for the ``sghi.etl.core.config`` module."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from unittest import TestCase
 from typing_extensions import override
 
 from sghi.disposable import not_disposed
-from sghi.miniETL.core import Processor, Sink, Source
+from sghi.etl.core import Processor, Sink, Source
 
 # =============================================================================
 # TESTS HELPERS
@@ -88,7 +88,7 @@ class CollectToList(Sink[Iterable[str]]):
 
 
 class TestSource(TestCase):
-    """Tests for the :class:`sghi.miniETL.core.Source` interface."""
+    """Tests for the :class:`sghi.etl.core.Source` interface."""
 
     @override
     def setUp(self) -> None:
@@ -104,18 +104,18 @@ class TestSource(TestCase):
     def test_invoking_source_as_a_callable_returns_expected_value(
         self,
     ) -> None:
-        """:class:`~sghi.miniETL.core.Source` should return the expected
+        """:class:`~sghi.etl.core.Source` should return the expected
         value when invoked as a callable.
 
         In short, ensure that invoking a ``Source`` instance as a callable
-        delegates the actual call to :meth:`~sghi.miniETL.core.Source.draw`.
+        delegates the actual call to :meth:`~sghi.etl.core.Source.draw`.
         """  # noqa: D202, D205
 
         assert tuple(self._instance()) == (0, 1, 2, 3, 4)
 
 
 class TestProcessor(TestCase):
-    """Tests for the :class:`sghi.miniETL.core.Processor` interface."""
+    """Tests for the :class:`sghi.etl.core.Processor` interface."""
 
     @override
     def setUp(self) -> None:
@@ -133,12 +133,12 @@ class TestProcessor(TestCase):
     def test_invoking_processor_as_a_callable_returns_expected_value(
         self,
     ) -> None:
-        """:class:`~sghi.miniETL.core.Processor` should return the expected
+        """:class:`~sghi.etl.core.Processor` should return the expected
         value when invoked as a callable.
 
         In short, ensure that invoking a ``Processor`` instance as a callable
         delegates the actual call to
-        :meth:`~sghi.miniETL.core.Processor.process`.
+        :meth:`~sghi.etl.core.Processor.process`.
         """  # noqa: D202, D205
 
         raw_values = self._source()
@@ -146,7 +146,7 @@ class TestProcessor(TestCase):
 
 
 class TestSink(TestCase):
-    """Tests for the :class:`sghi.miniETL.core.Processor` interface."""
+    """Tests for the :class:`sghi.etl.core.Processor` interface."""
 
     @override
     def setUp(self) -> None:
@@ -165,11 +165,11 @@ class TestSink(TestCase):
         self._instance.dispose()
 
     def test_invoking_sink_as_a_callable_returns_expected_value(self) -> None:
-        """:class:`~sghi.miniETL.core.Sink` should return the expected value
+        """:class:`~sghi.etl.core.Sink` should return the expected value
         when invoked as a callable.
 
         In short, ensure that invoking a ``Sink`` instance as a callable
-        delegates the actual call to :meth:`~sghi.miniETL.core.Sink.drain`.
+        delegates the actual call to :meth:`~sghi.etl.core.Sink.drain`.
         """  # noqa: D202, D205
 
         self._instance(self._processor(self._source()))

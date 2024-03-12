@@ -34,7 +34,7 @@ maintainers = [
     {name = "Kennedy Kori", email = "kennedykori47@gmail.com"},
     {name = "Salad Guyo", email = "saladguyo60@gmail.com"}
 ]
-name = "sghi-miniETL-core"
+name = "sghi-etl-core"
 readme = "README.md"
 requires-python = ">=3.11" # Support Python 3.10+.
 
@@ -71,10 +71,10 @@ test = [
 ]
 
 [project.urls]
-changelog = "https://github.com/savannahghi/sghi-miniETL-core/blob/develop/docs/CHANGELOG.md"
-documentation = "https://github.com/savannahghi/sghi-miniETL-core/blob/develop/README.md"
-homepage = "https://github.com/savannahghi/sghi-miniETL-core/"
-repository = "https://github.com/savannahghi/sghi-miniETL-core.git"
+changelog = "https://github.com/savannahghi/sghi-etl-core/blob/develop/docs/CHANGELOG.md"
+documentation = "https://github.com/savannahghi/sghi-etl-core/blob/develop/README.md"
+homepage = "https://github.com/savannahghi/sghi-etl-core/"
+repository = "https://github.com/savannahghi/sghi-etl-core.git"
 
 [tool.black]
 extend-exclude = """

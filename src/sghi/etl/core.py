@@ -37,7 +37,7 @@ class Source(Disposable, Generic[_RDT], metaclass=ABCMeta):
     In a typical ETL workflow, the `Extract` phase corresponds to the ``draw``
     method of this class. Consequently, a ``Source`` forms the initial step of
     an SGHI ETL workflow and is thus executed first. The obtained data is then
-    passed to a :class:`~sghi.miniETL.core.Processor` for further processing.
+    passed to a :class:`~sghi.etl.core.Processor` for further processing.
 
     .. tip::
 
@@ -76,10 +76,10 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
 
     In a typical ETL workflow, the `Transform` phase is functionally equivalent
     to the ``process`` method of this class. Accordingly, a ``Processor`` is
-    thus executed immediately after the :class:`~sghi.miniETL.core.Source`
+    thus executed immediately after the :class:`~sghi.etl.core.Source`
     finishes in an SGHI ETL workflow. The raw data obtained from the ``Source``
     is taken as input. The output of the ``Processor`` is then passed to a
-    :class:`~sghi.miniETL.core.Sink` for storage or transmission.
+    :class:`~sghi.etl.core.Sink` for storage or transmission.
 
     .. tip::
 
@@ -118,7 +118,7 @@ class Sink(Disposable, Generic[_PDT], metaclass=ABCMeta):
     """An entity that consumes processed data.
 
     This interface represents entities that consume processed data(the output
-    of a :meth:`data process operation<sghi.miniETL.core.Processor.process>`)
+    of a :meth:`data process operation<sghi.etl.core.Processor.process>`)
     and the final step of an SGHI ETL workflow. Subclasses implementing this
     interface should override the :meth:`drain` method to specify how the
     processed data is consumed.
