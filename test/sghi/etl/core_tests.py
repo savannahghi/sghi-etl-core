@@ -17,7 +17,7 @@ from sghi.etl.core import Processor, Sink, Source
 
 
 @dataclass(slots=True)
-class IntsSupplier(Source):
+class IntsSupplier(Source[Iterable[int]]):
     """A simple :class:`Source` that supplies integers."""
 
     max_ints: int = field(default=10)
@@ -88,18 +88,10 @@ class CollectToList(Sink[Iterable[str]]):
 
 
 class TestSource(TestCase):
-    """Tests for the :class:`sghi.etl.core.Source` interface."""
+    """Tests for the :class:`sghi.etl.core.Source` interface.
 
-    @override
-    def setUp(self) -> None:
-        super().setUp()
-        self._max_ints: int = 5
-        self._instance: IntsSupplier = IntsSupplier(max_ints=self._max_ints)
-
-    @override
-    def tearDown(self) -> None:
-        super().tearDown()
-        self._instance.dispose()
+    Tests for the default method implementations on the `Source` interface.
+    """
 
     def test_invoking_source_as_a_callable_returns_expected_value(
         self,
@@ -111,24 +103,33 @@ class TestSource(TestCase):
         delegates the actual call to :meth:`~sghi.etl.core.Source.draw`.
         """  # noqa: D202, D205
 
-        assert tuple(self._instance()) == (0, 1, 2, 3, 4)
+        instance1: IntsSupplier
+        instance2: IntsSupplier
+        max_ints: int = 4
+
+        with (
+            IntsSupplier(max_ints=max_ints) as instance1,
+            IntsSupplier(max_ints=max_ints) as instance2,
+        ):
+            assert list(instance1.draw()) == list(instance2()) == [0, 1, 2, 3]
 
 
 class TestProcessor(TestCase):
-    """Tests for the :class:`sghi.etl.core.Processor` interface."""
+    """Tests for the :class:`sghi.etl.core.Processor` interface.
+
+    Tests for the default method implementations on the `Processor` interface.
+    """
 
     @override
     def setUp(self) -> None:
         super().setUp()
         self._max_ints: int = 5
         self._source: IntsSupplier = IntsSupplier(max_ints=self._max_ints)
-        self._instance: IntsToStrings = IntsToStrings()
 
     @override
     def tearDown(self) -> None:
         super().tearDown()
         self._source.dispose()
-        self._instance.dispose()
 
     def test_invoking_processor_as_a_callable_returns_expected_value(
         self,
@@ -141,12 +142,24 @@ class TestProcessor(TestCase):
         :meth:`~sghi.etl.core.Processor.process`.
         """  # noqa: D202, D205
 
-        raw_values = self._source()
-        assert tuple(self._instance(raw_values)) == ("0", "1", "2", "3", "4")
+        raw_values = tuple(self._source())
+
+        instance1: IntsToStrings
+        instance2: IntsToStrings
+
+        with IntsToStrings() as instance1, IntsToStrings() as instance2:
+            assert (
+                tuple(instance1.process(raw_values))
+                == tuple(instance2(raw_values))
+                == ("0", "1", "2", "3", "4")
+            )
 
 
 class TestSink(TestCase):
-    """Tests for the :class:`sghi.etl.core.Processor` interface."""
+    """Tests for the :class:`sghi.etl.core.Processor` interface.
+
+    Tests for the default method implementations on the `Sink` interface.
+    """
 
     @override
     def setUp(self) -> None:
@@ -154,15 +167,12 @@ class TestSink(TestCase):
         self._max_ints: int = 5
         self._source: IntsSupplier = IntsSupplier(max_ints=self._max_ints)
         self._processor: IntsToStrings = IntsToStrings()
-        self._collection_target: list[str] = []
-        self._instance: CollectToList = CollectToList(self._collection_target)
 
     @override
     def tearDown(self) -> None:
         super().tearDown()
         self._source.dispose()
         self._processor.dispose()
-        self._instance.dispose()
 
     def test_invoking_sink_as_a_callable_returns_expected_value(self) -> None:
         """:class:`~sghi.etl.core.Sink` should return the expected value
@@ -172,6 +182,20 @@ class TestSink(TestCase):
         delegates the actual call to :meth:`~sghi.etl.core.Sink.drain`.
         """  # noqa: D202, D205
 
-        self._instance(self._processor(self._source()))
+        processed_data: tuple[str, ...]
+        processed_data = tuple(self._processor(self._source()))
 
-        assert self._collection_target == ["0", "1", "2", "3", "4"]
+        instance1: CollectToList
+        instance2: CollectToList
+
+        collect1: list[str] = []
+        collect2: list[str] = []
+
+        with (
+            CollectToList(collection_target=collect1) as instance1,
+            CollectToList(collection_target=collect2) as instance2,
+        ):
+            instance1.drain(processed_data)
+            instance2(processed_data)
+
+            assert collect1 == collect2 == ["0", "1", "2", "3", "4"]
