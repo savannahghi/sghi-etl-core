@@ -34,17 +34,17 @@ maintainers = [
     {name = "Kennedy Kori", email = "kennedykori47@gmail.com"},
     {name = "Salad Guyo", email = "saladguyo60@gmail.com"}
 ]
-name = "sghi-miniETL-core"
+name = "sghi-etl-core"
 readme = "README.md"
 requires-python = ">=3.11" # Support Python 3.10+.
 
 [project.optional-dependencies]
 dev = [
-    "pre-commit~=3.6.0",
+    "pre-commit~=3.6.2",
 ]
 
 docs = [
-    "furo==2023.9.10",
+    "furo==2024.1.29",
     "jaraco.packaging~=9.4.0",
     "rst.linker~=2.4.0",
     "Sphinx~=7.2.6",
@@ -59,22 +59,22 @@ test = [
     "coverage~=6.5.0",
     "coveralls~=3.3.1",
     "packaging",
-    "pyright>=1.1.345",
-    "pytest~=7.4.4",
+    "pyright>=1.1.353",
+    "pytest~=8.1.1",
     "pytest-cov~=4.1.0",
     "pytest-forked~=1.6.0",
-    "pytest-sugar~=0.9.7",
+    "pytest-sugar~=1.0.0",
     "pytest-xdist~=3.5.0",
-    "ruff~=0.1.11",
-    "tox~=4.11.4",
+    "ruff~=0.3.2",
+    "tox~=4.14.1",
     "tox-gh-actions~=3.2.0",
 ]
 
 [project.urls]
-changelog = "https://github.com/savannahghi/sghi-miniETL-core/blob/develop/docs/CHANGELOG.md"
-documentation = "https://github.com/savannahghi/sghi-miniETL-core/blob/develop/README.md"
-homepage = "https://github.com/savannahghi/sghi-miniETL-core/"
-repository = "https://github.com/savannahghi/sghi-miniETL-core.git"
+changelog = "https://github.com/savannahghi/sghi-etl-core/blob/develop/docs/CHANGELOG.md"
+documentation = "https://github.com/savannahghi/sghi-etl-core/blob/develop/README.md"
+homepage = "https://github.com/savannahghi/sghi-etl-core/"
+repository = "https://github.com/savannahghi/sghi-etl-core.git"
 
 [tool.black]
 extend-exclude = """
@@ -186,6 +186,17 @@ exclude = [
     "node_modules",
     "venv",
 ]
+line-length = 79
+src = ["src", "test"]
+target-version = "py311"
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
 ignore = [
     "ANN002",
     "ANN003",
@@ -198,7 +209,6 @@ ignore = [
     "ISC001",
     "S101",
 ]
-line-length = 79
 select = [
     "A",   # flake8-builtins
     "ANN", # flake8-annotations
@@ -231,23 +241,15 @@ select = [
     "W",   # pycodestyle Warning
     "YTT", # flake8-2020
 ]
-src = ["src", "test"]
-target-version = "py311"
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
 docstring-quotes = "double"
 
-[tool.ruff.format]
-docstring-code-format = true
-indent-style = "space"
-quote-style = "double"
-skip-magic-trailing-comma = false
-
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["src", "test"]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
 [tool.setuptools]
@@ -279,7 +281,7 @@ legacy_tox_ini = """
 
     [testenv]
     commands =
-        ruff .
+        ruff check .
         ruff format --check .
         pyright .
         coverage erase
