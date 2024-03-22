@@ -23,7 +23,7 @@
         <img alt="CI" src="https://github.com/savannahghi/sghi-etl-core/actions/workflows/ci.yml/badge.svg">
     </a>
     <a href="https://coveralls.io/github/savannahghi/sghi-etl-core?branch=develop">
-        <img alt="Coverage Status" src="https://img.shields.io/coverallsCoverage/github/savannahghi/sghi-commons?branch=develop&logo=coveralls">
+        <img alt="Coverage Status" src="https://img.shields.io/coverallsCoverage/github/savannahghi/sghi-etl-core?branch=develop&logo=coveralls">
     </a>
 </p>
 
