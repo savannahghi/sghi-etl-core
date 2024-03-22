@@ -1,6 +1,6 @@
 {
   "name": "sghi-etl-core",
-  "version": "1.0.0",
+  "version": "1.0.1-rc.1",
   "description": "API specification for components of a simple ETL workflow.",
   "directories": {
     "doc": "docs"
@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/savannahghi/sghi-etl-core/issues"
   },
-  "homepage": "https://github.com/savannahghi/sghi-commons",
+  "homepage": "https://github.com/savannahghi/sghi-etl-core",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^6.0.3",
