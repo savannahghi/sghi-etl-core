@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass, field
 from unittest import TestCase
 
+import pytest
 from typing_extensions import override
 
 from sghi.disposable import not_disposed
@@ -46,7 +47,7 @@ class IntsToStrings(Processor[Iterable[int], Iterable[str]]):
 
     @not_disposed
     @override
-    def process(self, raw_data: Iterable[int]) -> Iterable[str]:
+    def apply(self, raw_data: Iterable[int]) -> Iterable[str]:
         yield from map(str, raw_data)
 
     @property
@@ -101,8 +102,7 @@ class TestSource(TestCase):
 
         In short, ensure that invoking a ``Source`` instance as a callable
         delegates the actual call to :meth:`~sghi.etl.core.Source.draw`.
-        """  # noqa: D202, D205
-
+        """  # noqa: D205
         instance1: IntsSupplier
         instance2: IntsSupplier
         max_ints: int = 4
@@ -138,10 +138,8 @@ class TestProcessor(TestCase):
         value when invoked as a callable.
 
         In short, ensure that invoking a ``Processor`` instance as a callable
-        delegates the actual call to
-        :meth:`~sghi.etl.core.Processor.process`.
-        """  # noqa: D202, D205
-
+        delegates the actual call to :meth:`~sghi.etl.core.Processor.apply`.
+        """  # noqa: D205
         raw_values = tuple(self._source())
 
         instance1: IntsToStrings
@@ -149,10 +147,45 @@ class TestProcessor(TestCase):
 
         with IntsToStrings() as instance1, IntsToStrings() as instance2:
             assert (
-                tuple(instance1.process(raw_values))
+                tuple(instance1.apply(raw_values))
                 == tuple(instance2(raw_values))
                 == ("0", "1", "2", "3", "4")
             )
+
+    def test_invoking_the_process_method_returns_expected_value(self) -> None:
+        """:meth:`~sghi.etl.core.Processor.process` should return the expected
+        value.
+
+        That is, invoking the ``process`` method of a ``Processor`` instance
+        should return the same value as invoking the
+        :meth:`~sghi.etl.core.Processor.apply` method of the same instance.
+        """  # noqa: D205
+        raw_values = tuple(self._source())
+
+        instance1: IntsToStrings
+        instance2: IntsToStrings
+
+        with IntsToStrings() as instance1, IntsToStrings() as instance2:
+            assert (
+                tuple(instance1.apply(raw_values))
+                == tuple(instance2.process(raw_values))  # type: ignore
+                == ("0", "1", "2", "3", "4")
+            )
+
+    def test_invoking_the_process_method_raises_a_deprecation_waring(
+        self,
+    ) -> None:
+        """:meth:`~sghi.etl.core.Processor.process` is deprecated for removal.
+
+        Ensure that invoking the ``process`` method raised a
+        ``DeprecationWarning``.
+        """
+        raw_values = tuple(self._source())
+        instance: IntsToStrings = IntsToStrings()
+        with pytest.warns(DeprecationWarning, match='Use "apply" instead'):
+            instance.process(raw_values)  # type: ignore
+
+        instance.dispose()
 
 
 class TestSink(TestCase):
@@ -180,8 +213,7 @@ class TestSink(TestCase):
 
         In short, ensure that invoking a ``Sink`` instance as a callable
         delegates the actual call to :meth:`~sghi.etl.core.Sink.drain`.
-        """  # noqa: D202, D205
-
+        """  # noqa: D205
         processed_data: tuple[str, ...]
         processed_data = tuple(self._processor(self._source()))
 
