@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/savannahghi/sghi-etl-core/compare/v1.0.2...v1.1.0) (2024-04-03)
+
+
+### Refactors
+
+* **minor:** deprecate `Processor.process` in favor of `apply` ([#14](https://github.com/savannahghi/sghi-etl-core/issues/14)) ([5759fb7](https://github.com/savannahghi/sghi-etl-core/commit/5759fb7fa33cefb4a1c6874a14a346b1c7d5648f))
+
 ## [1.1.0-rc.1](https://github.com/savannahghi/sghi-etl-core/compare/v1.0.2...v1.1.0-rc.1) (2024-04-03)
 
 
