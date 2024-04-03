@@ -5,6 +5,8 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING, Generic, TypeVar
 
+from typing_extensions import deprecated
+
 from sghi.disposable import Disposable
 
 if TYPE_CHECKING:
@@ -71,11 +73,11 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
 
     This class defines a blueprint for processing raw data and converting it
     into processed data ready for further consumption downstream. Subclasses
-    implementing this interface should override the :meth:`process` method to
+    implementing this interface should override the :meth:`apply` method to
     specify how the data processing occurs.
 
     In a typical ETL workflow, the `Transform` phase is functionally equivalent
-    to the ``process`` method of this class. Accordingly, a ``Processor`` is
+    to the ``apply`` method of this class. Accordingly, a ``Processor`` is
     thus executed immediately after the :class:`~sghi.etl.core.Source`
     finishes in an SGHI ETL workflow. The raw data obtained from the ``Source``
     is taken as input. The output of the ``Processor`` is then passed to a
@@ -93,17 +95,17 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
         """Transform raw data into processed, clean data and return it.
 
         Call this ``Processor`` as a callable. Delegate actual call to
-        :meth:`process`.
+        :meth:`apply`.
 
         :param raw_data: The unprocessed data drawn from a `Source`.
 
         :return: The processed, cleaned data that is ready for further
             consumption downstream.
         """
-        return self.process(raw_data)
+        return self.apply(raw_data)
 
     @abstractmethod
-    def process(self, raw_data: _RDT) -> _PDT:
+    def apply(self, raw_data: _RDT) -> _PDT:
         """Transform raw data into processed, clean data and return it.
 
         :param raw_data: The unprocessed data drawn from a `Source`.
@@ -112,6 +114,23 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
             consumption downstream.
         """
         ...
+
+    @deprecated('Use "apply" instead. Will be removed in 2.0', stacklevel=1)
+    def process(self, raw_data: _RDT) -> _PDT:
+        """Transform raw data into processed, clean data and return it.
+
+        .. warning::
+
+            This method is deprecated and will be removed in a future
+            version. Clients of this class should use the :meth:`apply`
+            method instead, which this method delegates to.
+
+        :param raw_data: The unprocessed data drawn from a `Source`.
+
+        :return: The processed, cleaned data that is ready for further
+            consumption downstream.
+        """
+        return self.apply(raw_data)
 
 
 class Sink(Disposable, Generic[_PDT], metaclass=ABCMeta):
