@@ -1,3 +1,10 @@
+## [1.1.1-rc.1](https://github.com/savannahghi/sghi-etl-core/compare/v1.1.0...v1.1.1-rc.1) (2024-04-12)
+
+
+### Dependency Updates
+
+* **deps:** upgrade project dependencies ([#16](https://github.com/savannahghi/sghi-etl-core/issues/16)) ([7dbe9c2](https://github.com/savannahghi/sghi-etl-core/commit/7dbe9c2e783f9db0d90ce49090a99158b3a1d3ea))
+
 ## [1.1.0](https://github.com/savannahghi/sghi-etl-core/compare/v1.0.2...v1.1.0) (2024-04-03)
 
 
