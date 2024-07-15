@@ -108,6 +108,11 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
     def apply(self, raw_data: _RDT) -> _PDT:
         """Transform raw data into processed, clean data and return it.
 
+        .. versionadded:: 1.1.0
+
+            This replaces :meth:`~sghi.etl.core.Processor.process` which is
+            deprecated and will be removed in a future version.
+
         :param raw_data: The unprocessed data drawn from a `Source`.
 
         :return: The processed, cleaned data that is ready for further
@@ -119,16 +124,21 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
     def process(self, raw_data: _RDT) -> _PDT:
         """Transform raw data into processed, clean data and return it.
 
-        .. warning::
+        .. deprecated:: 1.1.0
 
             This method is deprecated and will be removed in a future
-            version. Clients of this class should use the :meth:`apply`
-            method instead, which this method delegates to.
+            version. Clients of this class should use the
+            :meth:`~sghi.etl.core.Processor.apply` method instead, which this
+            method delegates to.
 
         :param raw_data: The unprocessed data drawn from a `Source`.
 
         :return: The processed, cleaned data that is ready for further
             consumption downstream.
+
+        .. seealso::
+
+            :meth:`~sghi.etl.core.Processor.apply`
         """
         return self.apply(raw_data)
 
