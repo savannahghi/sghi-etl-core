@@ -25,6 +25,16 @@ _RDT = TypeVar("_RDT")
 
 
 # =============================================================================
+# HELPERS
+# =============================================================================
+
+
+def _noop() -> None:
+    """Do nothing."""
+    ...
+
+
+# =============================================================================
 # BASE INTERFACES
 # =============================================================================
 
@@ -108,6 +118,11 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
     def apply(self, raw_data: _RDT) -> _PDT:
         """Transform raw data into processed, clean data and return it.
 
+        .. versionadded:: 1.1.0
+
+            This replaces :meth:`~sghi.etl.core.Processor.process` which is
+            deprecated and will be removed in a future version.
+
         :param raw_data: The unprocessed data drawn from a `Source`.
 
         :return: The processed, cleaned data that is ready for further
@@ -119,16 +134,21 @@ class Processor(Disposable, Generic[_RDT, _PDT], metaclass=ABCMeta):
     def process(self, raw_data: _RDT) -> _PDT:
         """Transform raw data into processed, clean data and return it.
 
-        .. warning::
+        .. deprecated:: 1.1.0
 
             This method is deprecated and will be removed in a future
-            version. Clients of this class should use the :meth:`apply`
-            method instead, which this method delegates to.
+            version. Clients of this class should use the
+            :meth:`~sghi.etl.core.Processor.apply` method instead, which this
+            method delegates to.
 
         :param raw_data: The unprocessed data drawn from a `Source`.
 
         :return: The processed, cleaned data that is ready for further
             consumption downstream.
+
+        .. seealso::
+
+            :meth:`~sghi.etl.core.Processor.apply`
         """
         return self.apply(raw_data)
 
@@ -262,3 +282,32 @@ class WorkflowDefinition(Generic[_RDT, _PDT], metaclass=ABCMeta):
             ``Sink`` instance associated with this workflow.
         """
         ...
+
+    @property
+    def prologue(self) -> Callable[[], None]:
+        """A callable to be executed at the beginning of the workflow.
+
+        If the execution of this callable fails, i.e. raises an exception, then
+        the main workflow is never executed, only the callable returned by the
+        :attr:`epilogue` property is.
+        This can be used to validate the loaded configuration, setting up
+        certain resources before the workflow execution starts, etc.
+        The default implementation of this property returns a callable that
+        does nothing.
+
+        .. versionadded:: 1.2.0
+        """
+        return _noop
+
+    @property
+    def epilogue(self) -> Callable[[], None]:
+        """A callable to be executed at the end of the workflow.
+
+        This is always executed regardless of whether the :meth:`prologue` or
+        workflow completed successfully or not.
+        The default implementation of this property returns a callable that
+        does nothing.
+
+        .. versionadded:: 1.2.0
+        """
+        return _noop

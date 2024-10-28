@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from unittest import TestCase
 
@@ -10,7 +10,8 @@ import pytest
 from typing_extensions import override
 
 from sghi.disposable import not_disposed
-from sghi.etl.core import Processor, Sink, Source
+from sghi.etl.core import Processor, Sink, Source, WorkflowDefinition
+from sghi.utils import type_fqn
 
 # =============================================================================
 # TESTS HELPERS
@@ -19,7 +20,7 @@ from sghi.etl.core import Processor, Sink, Source
 
 @dataclass(slots=True)
 class IntsSupplier(Source[Iterable[int]]):
-    """A simple :class:`Source` that supplies integers."""
+    """A  :class:`Source` that supplies integers."""
 
     max_ints: int = field(default=10)
     _is_disposed: bool = field(default=False, init=False)
@@ -64,14 +65,13 @@ class IntsToStrings(Processor[Iterable[int], Iterable[str]]):
 class CollectToList(Sink[Iterable[str]]):
     """A :class:`Sink` that collects all the values it receives in a list."""
 
-    collection_target: list[str] = field()
+    collection_target: list[str] = field(default_factory=list)
     _is_disposed: bool = field(default=False, init=False)
 
     @not_disposed
     @override
     def drain(self, processed_data: Iterable[str]) -> None:
-        for value in processed_data:
-            self.collection_target.append(value)
+        self.collection_target.extend(processed_data)
 
     @property
     @override
@@ -83,6 +83,45 @@ class CollectToList(Sink[Iterable[str]]):
         self._is_disposed = True
 
 
+@dataclass(frozen=True, slots=True)
+class SimpleWorkflowDefinition(
+    WorkflowDefinition[Iterable[int], Iterable[str]],
+):
+    """A simple :class:`WorkflowDefinition` implementation."""
+
+    @property
+    @override
+    def description(self) -> str | None:
+        return None
+
+    @property
+    @override
+    def id(self) -> str:
+        return "test"
+
+    @property
+    @override
+    def name(self) -> str:
+        return "Test Workflow"
+
+    @property
+    @override
+    def processor_factory(
+        self,
+    ) -> Callable[[], Processor[Iterable[int], Iterable[str]]]:
+        return IntsToStrings
+
+    @property
+    @override
+    def sink_factory(self) -> Callable[[], Sink[Iterable[str]]]:
+        return CollectToList
+
+    @property
+    @override
+    def source_factory(self) -> Callable[[], Source[Iterable[int]]]:
+        return IntsSupplier
+
+
 # =============================================================================
 # TESTS
 # =============================================================================
@@ -91,7 +130,7 @@ class CollectToList(Sink[Iterable[str]]):
 class TestSource(TestCase):
     """Tests for the :class:`sghi.etl.core.Source` interface.
 
-    Tests for the default method implementations on the `Source` interface.
+    Tests for the default method implementations of the ``Source`` interface.
     """
 
     def test_invoking_source_as_a_callable_returns_expected_value(
@@ -111,13 +150,15 @@ class TestSource(TestCase):
             IntsSupplier(max_ints=max_ints) as instance1,
             IntsSupplier(max_ints=max_ints) as instance2,
         ):
+            # noinspection PyArgumentList
             assert list(instance1.draw()) == list(instance2()) == [0, 1, 2, 3]
 
 
 class TestProcessor(TestCase):
     """Tests for the :class:`sghi.etl.core.Processor` interface.
 
-    Tests for the default method implementations on the `Processor` interface.
+    Tests for the default method implementations of the ``Processor``
+    interface.
     """
 
     @override
@@ -191,7 +232,7 @@ class TestProcessor(TestCase):
 class TestSink(TestCase):
     """Tests for the :class:`sghi.etl.core.Processor` interface.
 
-    Tests for the default method implementations on the `Sink` interface.
+    Tests for the default method implementations of the ``Sink`` interface.
     """
 
     @override
@@ -231,3 +272,57 @@ class TestSink(TestCase):
             instance2(processed_data)
 
             assert collect1 == collect2 == ["0", "1", "2", "3", "4"]
+
+
+class TestWorkflow(TestCase):
+    """Tests for the :class:`sghi.etl.core.WorkflowDefinition` interface.
+
+    Tests for the default method implementations of the ``WorkflowDefinition``
+    interface.
+    """
+
+    @override
+    def setUp(self) -> None:
+        super().setUp()
+        self._instance: WorkflowDefinition[Iterable[int], Iterable[str]]
+        self._instance = SimpleWorkflowDefinition()
+
+    def test_epilogue_return_value(self) -> None:
+        """The default implementation of
+        :meth:`~sghi.etl.core.WorkflowDefinition.epilogue` should return a
+        callable that does nothing.
+        """  # noqa: D205
+        epilogue: Callable[[], None] = self._instance.epilogue
+        assert callable(epilogue)
+
+        try:
+            epilogue()
+        except Exception as exp:  # noqa: BLE001
+            _fail_reason: str = (
+                f"The following unexpected error: '{exp!r}', was raised when "
+                "invoking the callable returned by the default implementation "
+                f"of the '{type_fqn(WorkflowDefinition)}.epilogue' property. "
+                "No errors should be raised by the callable returned by the "
+                "default implementation of the said property."
+            )
+            pytest.fail(reason=_fail_reason)
+
+    def test_prologue_return_value(self) -> None:
+        """The default implementation of
+        :meth:`~sghi.etl.core.WorkflowDefinition.prologue` should return a
+        callable that does nothing.
+        """  # noqa: D205
+        prologue: Callable[[], None] = self._instance.prologue
+        assert callable(prologue)
+
+        try:
+            prologue()
+        except Exception as exp:  # noqa: BLE001
+            _fail_reason: str = (
+                f"The following unexpected error: '{exp!r}', was raised when "
+                "invoking the callable returned by the default implementation "
+                f"of the '{type_fqn(WorkflowDefinition)}.prologue' property. "
+                "No errors should be raised by the callable returned by the "
+                "default implementation of the said property."
+            )
+            pytest.fail(reason=_fail_reason)
