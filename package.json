@@ -1,6 +1,6 @@
 {
   "name": "sghi-etl-core",
-  "version": "1.2.0-rc.1",
+  "version": "1.2.0",
   "description": "API specification for components of a simple ETL workflow.",
   "directories": {
     "doc": "docs"

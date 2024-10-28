@@ -1,3 +1,26 @@
+## [1.2.0](https://github.com/savannahghi/sghi-etl-core/compare/v1.1.1...v1.2.0) (2024-10-28)
+
+
+### Dependency Updates
+
+* **deps:** upgrade project dependencies ([#19](https://github.com/savannahghi/sghi-etl-core/issues/19)) ([9074301](https://github.com/savannahghi/sghi-etl-core/commit/907430140ce14b32f5e05a04458bf62d5402fe9b))
+* **deps:** upgrade project dependencies ([#23](https://github.com/savannahghi/sghi-etl-core/issues/23)) ([ce00b54](https://github.com/savannahghi/sghi-etl-core/commit/ce00b548d96b30b4d0bba7b38245505809d85bfa))
+
+
+### Documentation Updates
+
+* **api:** minor docs fixes and updates ([#21](https://github.com/savannahghi/sghi-etl-core/issues/21)) ([857b43b](https://github.com/savannahghi/sghi-etl-core/commit/857b43b508b8078676cc172a303d28183f19ba19))
+
+
+### Features
+
+* **workflow:** add `prologue` and `epilogue` to `WorkflowDefinition` ([#22](https://github.com/savannahghi/sghi-etl-core/issues/22)) ([2c69085](https://github.com/savannahghi/sghi-etl-core/commit/2c69085a65fa5da32313b67294332f4de7b79c8d))
+
+
+### Refactors
+
+* **deps-dev:** bump braces from 3.0.2 to 3.0.3 ([#25](https://github.com/savannahghi/sghi-etl-core/issues/25)) ([c808f9c](https://github.com/savannahghi/sghi-etl-core/commit/c808f9c70aa778567b2a749244928371842826b3))
+
 ## [1.2.0-rc.1](https://github.com/savannahghi/sghi-etl-core/compare/v1.1.1...v1.2.0-rc.1) (2024-10-28)
 
 
