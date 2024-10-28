@@ -84,7 +84,9 @@ class CollectToList(Sink[Iterable[str]]):
 
 
 @dataclass(frozen=True, slots=True)
-class TestWorkflowDefinition(WorkflowDefinition[Iterable[int], Iterable[str]]):
+class SimpleWorkflowDefinition(
+    WorkflowDefinition[Iterable[int], Iterable[str]],
+):
     """A simple :class:`WorkflowDefinition` implementation."""
 
     @property
@@ -283,7 +285,7 @@ class TestWorkflow(TestCase):
     def setUp(self) -> None:
         super().setUp()
         self._instance: WorkflowDefinition[Iterable[int], Iterable[str]]
-        self._instance = TestWorkflowDefinition()
+        self._instance = SimpleWorkflowDefinition()
 
     def test_epilogue_return_value(self) -> None:
         """The default implementation of
