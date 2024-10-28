@@ -25,6 +25,16 @@ _RDT = TypeVar("_RDT")
 
 
 # =============================================================================
+# HELPERS
+# =============================================================================
+
+
+def _noop() -> None:
+    """Do nothing."""
+    ...
+
+
+# =============================================================================
 # BASE INTERFACES
 # =============================================================================
 
@@ -272,3 +282,32 @@ class WorkflowDefinition(Generic[_RDT, _PDT], metaclass=ABCMeta):
             ``Sink`` instance associated with this workflow.
         """
         ...
+
+    @property
+    def prologue(self) -> Callable[[], None]:
+        """A callable to be executed at the beginning of the workflow.
+
+        If the execution of this callable fails, i.e. raises an exception, then
+        the main workflow is never executed, only the callable returned by the
+        :attr:`epilogue` property is.
+        This can be used to validate the loaded configuration, setting up
+        certain resources before the workflow execution starts, etc.
+        The default implementation of this property returns a callable that
+        does nothing.
+
+        .. versionadded:: 1.2.0
+        """
+        return _noop
+
+    @property
+    def epilogue(self) -> Callable[[], None]:
+        """A callable to be executed at the end of the workflow.
+
+        This is always executed regardless of whether the :meth:`prologue` or
+        workflow completed successfully or not.
+        The default implementation of this property returns a callable that
+        does nothing.
+
+        .. versionadded:: 1.2.0
+        """
+        return _noop
